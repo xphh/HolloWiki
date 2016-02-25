@@ -2,6 +2,7 @@
 
 class SvnSource 
 {
+	private $name;
 	private $basedir;
 	private $username;
 	private $password;
@@ -14,6 +15,14 @@ class SvnSource
 		}
 		pclose($fp);
 		return $data;
+	}
+	
+	public function SvnSource($name) {
+		$this->name = $name;
+	}
+	
+	public function getName() {
+		return $this->name;
 	}
 
 	public function setBasedir($basedir) {

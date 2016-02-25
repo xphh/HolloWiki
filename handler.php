@@ -1,31 +1,50 @@
 <?php
-function doLink($alt, $path) {
-	return "[$alt](?p=".urlencode($path).")";
+function doLink($alt, $path, $sid) {
+	return "[$alt](?p=".urlencode($path)."&s=$sid)";
 }
 	
-function doLinkRev($alt, $path, $rev) {
-	return "[$alt](?p=".urlencode($path)."&r=$rev)";
+function doLinkRev($alt, $path, $sid, $rev) {
+	global $sid;
+	return "[$alt](?p=".urlencode($path)."&s=$sid&r=$rev)";
 }
 
 class Handler
 {
+	private $sources;
 	private $source;
+	private $sid;
 	
-	public function Handler($source) {
-		$this->source = $source;
+	public function Handler($sources, $sid) {
+		$this->sources = $sources;
+		$this->source = $sources[$sid];
+		$this->sid = $sid;
+	}
+	
+	public function makeIndex($path) {
+		$mdtext = "## Directory\n";
+
+		foreach ($this->sources as $i => $s) {
+			if ($i == $this->sid) {
+				$mdtext = $mdtext.$this->handleDirectory($path);
+			} else {
+				$mdtext = $mdtext."* ".doLink($s->getName(), "/", $i)."\n";
+			}
+		}
+		
+		return $mdtext;
 	}
 	
 	public function handleDirectory($path) {
-		$mdtext = "##Directory\n";
+		$mdtext = "";
 
 		$arr = explode("/", $path);
 		$dirpath = "/";
 
-		$mdtext = $mdtext."* ".doLink("root", "/")."/";
+		$mdtext = $mdtext."* ".doLink($this->source->getName(), "/", $this->sid)." / ";
 		foreach ($arr as $dir) {
 			if ($dir != "") {
 				$dirpath = "$dirpath$dir/";
-				$mdtext = $mdtext.doLink($dir, $dirpath)."/";
+				$mdtext = $mdtext.doLink($dir, $dirpath, $this->sid)." / ";
 			}
 		}
 		$mdtext = $mdtext."\n";
@@ -37,9 +56,9 @@ class Handler
 			}
 			$subpath = $path.$name;
 			if (substr($name, -1) == "/") {
-				$mdtext = $mdtext." * ".doLink($name, $subpath)."\n";
+				$mdtext = $mdtext." * ".doLink($name, $subpath, $this->sid)."\n";
 			} else {
-				$mdtext = $mdtext." * [".doLinkRev("@", $subpath, "@")."] ".doLink($name, $subpath)."\n";
+				$mdtext = $mdtext." * [".doLinkRev("@", $subpath, $this->sid, "@")."] ".doLink($name, $subpath, $this->sid)."\n";
 			}
 		}
 
@@ -83,7 +102,7 @@ class Handler
 			$date = $node['date'];
 			$desc = $node['desc'];
 			
-			$mdtext = $mdtext."* ".doLinkRev($rev, $path, $rev).", $author, $date\n";
+			$mdtext = $mdtext."* ".doLinkRev($rev, $path, $this->sid, $rev).", $author, $date\n";
 			$mdtext = $mdtext."> $desc\n\n";
 		}
 
@@ -91,16 +110,17 @@ class Handler
 	}
 	
 	private function handleMarkdown($path, $content) {
-		global $fpath;
-		$fpath = get_dirpath($path);
+		global $i_fpath, $i_sid;
+		$i_fpath = get_dirpath($path);
+		$i_sid = $this->sid;
 		
 		function replace1($m) {
-			global $fpath;
-			return doLink($m[1], $fpath.$m[2]);
+			global $i_fpath, $i_sid;
+			return doLink($m[1], $i_fpath.$m[2], $i_sid);
 		}
 		function replace2($m) {
-			global $fpath;
-			return doLink($m[1], $fpath.$m[1].".md");
+			global $i_fpath, $i_sid;
+			return doLink($m[1], $i_fpath.$m[1].".md", $i_sid);
 		}
 
 		$content = preg_replace_callback("/\[(.*)\]\(#(.*)\)/U", replace1, $content);

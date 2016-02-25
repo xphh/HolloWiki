@@ -1,12 +1,11 @@
 <?php
 require_once("source.php");
 
-$svnpath = "https://github.com/xphh/HolloWiki/trunk";
-$svnusr = '';
-$svnpwd = '';
+global $g_sources;
+$g_sources = array();
 
-$g_source = source_init("SvnSource");
-$g_source->setBasedir($svnpath);
-$g_source->setAuth($svnusr, $svnpwd);
+$g_sources['main'] = source_init('SvnSource', '主仓');
+$g_sources['main']->setBasedir('https://github.com/xphh/HolloWiki/trunk');
+$g_sources['main']->setAuth('', '');
 
 ?>
