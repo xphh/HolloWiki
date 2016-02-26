@@ -2,7 +2,9 @@
 require_once("handler.php");
 require_once("utils.php");
 require_once("parsedown/Parsedown.php");
+
 include("settings.php");
+include("theme.php");
 
 $rev = $_GET["r"];
 $sid = $_GET["s"];
@@ -12,20 +14,6 @@ if ($sid == null) {
 $path = $_GET["p"];
 if ($path == null) {
 	$path = "/";
-}
-
-$theme = $_GET["theme"];
-session_start();
-if ($theme == null) {
-	$theme = $_SESSION["theme"];
-} else {
-	$_SESSION["theme"] = $theme;
-}
-
-if ($theme == null || $theme == "" || $theme == "default" ) {
-	$mdcss = "markdown.css";
-} else {
-	$mdcss = "markdown/$theme.css";
 }
 
 $handler = new Handler($g_sources);
@@ -46,6 +34,10 @@ $template = file_get_contents("template.html");
 $template = str_replace("{%mdcss%}", $mdcss, $template);
 $template = str_replace("{%index%}", $index, $template);
 $template = str_replace("{%content%}", $content, $template);
+
+$themes = file_get_contents("themes.md");
+$themes = $Parsedown->text($themes);
+$template = str_replace("{%themes%}", $themes, $template);
 
 echo $template;
 
