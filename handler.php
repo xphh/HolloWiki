@@ -125,7 +125,10 @@ class Handler
 		function replace1($m) {
 			global $i_fpath, $i_sid;
 			$url = $m[2];
-			if (strpos($url, "/") === 0 || strpos($url, "http://") === 0 || strpos($url, "https://") === 0) {
+			if (strpos($url, "/") === 0 || 
+				strpos($url, "?") === 0 || 
+				strpos($url, "http://") === 0 || 
+				strpos($url, "https://") === 0) {
 				return "[$m[1]]($url)";
 			} else {
 				$link = hwLink($i_sid, $i_fpath.$url, null);

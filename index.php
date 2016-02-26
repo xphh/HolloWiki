@@ -14,6 +14,20 @@ if ($path == null) {
 	$path = "/";
 }
 
+$theme = $_GET["theme"];
+session_start();
+if ($theme == null) {
+	$theme = $_SESSION["theme"];
+} else {
+	$_SESSION["theme"] = $theme;
+}
+
+if ($theme == null || $theme == "" || $theme == "default" ) {
+	$mdcss = "markdown.css";
+} else {
+	$mdcss = "markdown/$theme.css";
+}
+
 $handler = new Handler($g_sources);
 
 if (substr($path, -1) == "/") {
@@ -29,6 +43,7 @@ $index = $Parsedown->text($index);
 $content = $Parsedown->text($content);
 
 $template = file_get_contents("template.html");
+$template = str_replace("{%mdcss%}", $mdcss, $template);
 $template = str_replace("{%index%}", $index, $template);
 $template = str_replace("{%content%}", $content, $template);
 
