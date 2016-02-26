@@ -42,7 +42,8 @@ class Handler
 		$mdtext = $mdtext."* [$sname]($link) / ";
 		foreach ($arr as $dir) {
 			if ($dir != "") {
-				$link = hwLink($sid, "$dirpath$dir/", null);
+				$dirpath = "$dirpath$dir/";
+				$link = hwLink($sid, $dirpath, null);
 				$mdtext = $mdtext."[$dir]($link) / ";
 			}
 		}
