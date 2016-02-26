@@ -2,40 +2,33 @@
 require_once("handler.php");
 require_once("utils.php");
 require_once("parsedown/Parsedown.php");
+include("settings.php");
 
 $rev = $_GET["r"];
 $sid = $_GET["s"];
 if ($sid == null) {
-	$sid = 'main';
+	$sid = key($g_sources);
 }
 $path = $_GET["p"];
 if ($path == null) {
 	$path = "/";
 }
 
-include("settings.php");
-$handler = new Handler($g_sources, $sid);
+$handler = new Handler($g_sources);
 
-$Parsedown = new Parsedown();
-$template = file_get_contents("template.html");
-
-if ($rev == "@") {
-	$index = $handler->makeIndex(get_dirpath($path));
-	$content = $handler->handleHistory($path);
+if (substr($path, -1) == "/") {
+	$index = $handler->makeIndex($sid, $path);
+	$content = $handler->handleFile($sid, $path."Home.md", null);
 } else {
-	$lastchr = substr($path, -1);
-	if ($lastchr == "/") {
-		$index = $handler->makeIndex($path);
-		$content = $handler->handleFile($path."Home.md", null);
-	} else {
-		$index = $handler->makeIndex(get_dirpath($path));
-		$content = $handler->handleFile($path, $rev);
-	}
+	$index = $handler->makeIndex($sid, get_dirpath($path));
+	$content = $handler->handleFile($sid, $path, $rev);
 }
 
+$Parsedown = new Parsedown();
 $index = $Parsedown->text($index);
 $content = $Parsedown->text($content);
 
+$template = file_get_contents("template.html");
 $template = str_replace("{%index%}", $index, $template);
 $template = str_replace("{%content%}", $content, $template);
 
