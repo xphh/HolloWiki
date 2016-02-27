@@ -19,6 +19,8 @@ if ($theme == null) {
 	$lasturl = $_SESSION["lasturl"];
 	header("HTTP/1.1 302 Found");
 	header("Location: $lasturl");
+	
+	exit();
 }
 
 ?>

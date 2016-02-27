@@ -4,16 +4,25 @@ class SvnSource
 {
 	private $name;
 	private $basedir;
+	private $encoding;
 	private $username;
 	private $password;
 
-	private static function docmd($cmd, $mode) {
-		$cmd = mb_convert_encoding($cmd, 'GBK', 'UTF-8');
+	private function command($op, $path, $istext) {
+		$cmd = "svn $op $this->basedir$path --username $this->username --password $this->password";
+		$cmd = mb_convert_encoding($cmd, $this->encoding, 'UTF-8');
+		$mode = $istext ? 'r' : 'rb';
+		
 		$fp = popen($cmd, $mode);
 		while (!feof($fp)) { 
 			$data .= fgets($fp);
 		}
 		pclose($fp);
+		
+		if ($istext) {
+			$data = mb_convert_encoding($data, 'UTF-8', $this->encoding);
+		}
+		
 		return $data;
 	}
 	
@@ -25,6 +34,10 @@ class SvnSource
 		return $this->name;
 	}
 
+	public function setEncoding($encoding) {
+		$this->encoding = $encoding;
+	}
+	
 	public function setBasedir($basedir) {
 		$this->basedir = $basedir;
 	}
@@ -35,20 +48,18 @@ class SvnSource
 	}
 	
 	public function getDirectory($path) {
-		$raw = SvnSource::docmd("svn list $this->basedir$path --username $this->username --password $this->password", "r");
-		$raw = mb_convert_encoding($raw, 'UTF-8', 'GBK');
+		$raw = $this->command('list', $path, true);
 		$arr = explode("\n", $raw);
 		return $arr;
 	}
 	
 	public function getFile($path) {
-		$raw = SvnSource::docmd("svn cat $this->basedir$path --username $this->username --password $this->password", "rb");
+		$raw = $this->command('cat', $path, false);
 		return $raw;
 	}
 	
 	public function getHistory($path) {
-		$raw = SvnSource::docmd("svn log $this->basedir$path --username $this->username --password $this->password", "r");
-		$raw = mb_convert_encoding($raw, 'UTF-8', 'GBK');
+		$raw = $this->command('log', $path, true);
 		$arr = explode("------------------------------------------------------------------------", $raw);
 		
 		$list = array();

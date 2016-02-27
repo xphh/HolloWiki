@@ -54,17 +54,21 @@ class LofsSource
 		$filename = $this->safepath($this->basedir.$path);
 		$list = array();
 		if (file_exists($filename)) {
-			$attr = stat($filename);
+			$owner = fileowner($filename);
+			$ctime = filectime($filename);
+			$mtime = filemtime($filename);
+			if ($ctime != $mtime) {
+				$node = array();
+				$node["rev"] = '';
+				$node["author"] = $owner;
+				$node["date"] = date('r', $mtime);
+				$node["desc"] = 'Last modify';
+				$list[count($list)] = $node;
+			}
 			$node = array();
 			$node["rev"] = '';
-			$node["author"] = fileowner($filename);
-			$node["date"] = date('r', filemtime($filename));
-			$node["desc"] = 'Last modify';
-			$list[count($list)] = $node;
-			$node = array();
-			$node["rev"] = '';
-			$node["author"] = fileowner($filename);
-			$node["date"] = date('r', filectime($filename));
+			$node["author"] = $owner;
+			$node["date"] = date('r', $ctime);
 			$node["desc"] = 'Created';
 			$list[count($list)] = $node;
 		}
