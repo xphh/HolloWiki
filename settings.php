@@ -4,8 +4,11 @@ require_once("source.php");
 global $g_sources;
 $g_sources = array();
 
-$g_sources['main'] = source_init('SvnSource', 'root');
-$g_sources['main']->setBasedir('https://github.com/xphh/HolloWiki/trunk');
-$g_sources['main']->setAuth('', '');
+$g_sources['lo'] = source_init('LofsSource', 'local');
+$g_sources['lo']->setBasedir('.');
+
+$g_sources['svn'] = source_init('SvnSource', 'github');
+$g_sources['svn']->setBasedir('https://github.com/xphh/HolloWiki/trunk');
+$g_sources['svn']->setAuth('', '');
 
 ?>
