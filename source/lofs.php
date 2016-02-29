@@ -3,6 +3,7 @@
 class LofsSource 
 {
 	private $name;
+	private $encoding;
 	private $basedir;
 
 	public function LofsSource($name) {
@@ -13,11 +14,16 @@ class LofsSource
 		return $this->name;
 	}
 
+	public function setEncoding($encoding) {
+		$this->encoding = $encoding;
+	}
+	
 	public function setBasedir($basedir) {
 		$this->basedir = $basedir;
 	}
 	
 	private function safepath($path) {
+		$path = mb_convert_encoding($path, $this->encoding, 'UTF-8');
 		$path = preg_replace('/^\\.\\.\\//', '', $path);
 		$path = preg_replace('/\\/\\.\\.\\//', '', $path);
 		return $path;
@@ -31,10 +37,11 @@ class LofsSource
 			if ($name == '.' || $name == '..') {
 				
 			} else {
+				$showname = mb_convert_encoding($name, 'UTF-8', $this->encoding);
 				if (filetype($dir.$name) == 'dir') {
-					$arr[count($arr)] = $name.'/';
+					$arr[count($arr)] = $showname.'/';
 				} else {
-					$arr[count($arr)] = $name;
+					$arr[count($arr)] = $showname;
 				}
 			}
 		}
