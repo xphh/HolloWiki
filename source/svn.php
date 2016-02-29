@@ -10,7 +10,7 @@ class SvnSource
 
 	private function command($op, $path, $istext) {
 		$cmd = "svn $op $this->basedir$path --username $this->username --password $this->password";
-		$cmd = mb_convert_encoding($cmd, $this->encoding, 'UTF-8');
+		$cmd = iconv('UTF-8', $this->encoding, $cmd);
 		$mode = $istext ? 'r' : 'rb';
 		
 		$fp = popen($cmd, $mode);
@@ -20,7 +20,7 @@ class SvnSource
 		pclose($fp);
 		
 		if ($istext) {
-			$data = mb_convert_encoding($data, 'UTF-8', $this->encoding);
+			$data = iconv($this->encoding, 'UTF-8', $data);
 		}
 		
 		return $data;

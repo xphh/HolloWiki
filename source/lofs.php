@@ -23,7 +23,7 @@ class LofsSource
 	}
 	
 	private function safepath($path) {
-		$path = mb_convert_encoding($path, $this->encoding, 'UTF-8');
+		$path = iconv('UTF-8', $this->encoding, $path);
 		$path = preg_replace('/^\\.\\.\\//', '', $path);
 		$path = preg_replace('/\\/\\.\\.\\//', '', $path);
 		return $path;
@@ -37,7 +37,7 @@ class LofsSource
 			if ($name == '.' || $name == '..') {
 				
 			} else {
-				$showname = mb_convert_encoding($name, 'UTF-8', $this->encoding);
+				$showname = iconv($this->encoding, 'UTF-8', $name);
 				if (filetype($dir.$name) == 'dir') {
 					$arr[count($arr)] = $showname.'/';
 				} else {
