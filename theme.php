@@ -1,6 +1,4 @@
 <?php
-$url = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-
 session_start();
 
 $theme = $_GET["theme"];
@@ -12,7 +10,11 @@ if ($theme == null) {
 		$mdcss = "markdown/$theme.css";
 	}
 	
-	$_SESSION["lasturl"] = $url;
+	$path = $_GET["p"];
+	if (substr($path, -1) == '/' || substr($path, -3) == '.md') {
+		$url = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+		$_SESSION["lasturl"] = $url;
+	}
 } else {
 	$_SESSION["theme"] = $theme;
 	
