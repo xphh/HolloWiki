@@ -58,7 +58,14 @@ class Handler
 			if (substr($name, -1) == "/") {
 				$link = hwLink($sid, $subpath, null);
 				$mdtext = $mdtext." * [$name]($link)\n";
-			} else {
+			}
+		}
+		foreach($list as $name) {
+			if ($name == "") {
+				continue;
+			}
+			$subpath = $path.$name;
+			if (substr($name, -1) != "/") {
 				$linkLog = hwLink($sid, $subpath, "@");
 				$link = hwLink($sid, $subpath, null);
 				$mdtext = $mdtext." * [[@]($linkLog)] [$name]($link)\n";
