@@ -95,7 +95,7 @@ class Handler
 		} else {
 			$filesize = strlen($content);
 			$type = get_mimetype($filename);
-			$filename = urlencode($filename);
+			$filename = rawurlencode($filename);
 
 			header("Content-Type: $type");
 			header("Content-Length: $filesize");
