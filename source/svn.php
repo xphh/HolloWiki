@@ -9,7 +9,7 @@ class SvnSource
 	private $password;
 
 	private function command($op, $path, $istext) {
-		$cmd = "svn $op $this->basedir$path --username $this->username --password $this->password";
+		$cmd = "svn $op \"$this->basedir$path\" --username $this->username --password $this->password";
 		$cmd = iconv('UTF-8', $this->encoding, $cmd);
 		$mode = $istext ? 'r' : 'rb';
 		
