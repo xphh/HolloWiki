@@ -138,7 +138,8 @@ class Handler
 				strpos($url, "https://") === 0) {
 				return "[$m[1]]($url)";
 			} else {
-				$link = hwLink($i_sid, $i_fpath.$url, null);
+				$realurl = normalizePath($i_fpath.$url);
+				$link = hwLink($i_sid, $realurl, null);
 				return "[$m[1]]($link)";
 			}
 		}
