@@ -1,4 +1,6 @@
 <?php
+require_once("footprint.php");
+
 function hwLink($sid, $path, $rev) {
 	$link = "?p=".rawurlencode($path)."&s=".rawurlencode($sid);
 	if ($rev != null) {
@@ -15,12 +17,18 @@ class Handler
 		$this->sources = $sources;
 	}
 	
-	public function makeIndex($sid, $path) {
+	public function footprint($sid, $path, $rev) {
+		Footprint::record($sid, $path, $rev);
+	}
+	
+	public function makeIndex($sid, $path, $mark) {
 		$mdtext = "## Directory\n";
+		
+		$mdtext = $mdtext.$this->makeFootprint();
 
 		foreach ($this->sources as $i => $s) {
 			if ($i == $sid) {
-				$mdtext = $mdtext.$this->handleDirectory($sid, $path);
+				$mdtext = $mdtext.$this->handleDirectory($sid, $path, $mark);
 			} else {
 				$name = $s->getName();
 				$link = hwLink($i, "/", null);
@@ -31,7 +39,28 @@ class Handler
 		return $mdtext;
 	}
 	
-	public function handleDirectory($sid, $path) {
+	public function makeFootprint() {
+		$mdtext = "* Footprint\n";
+		
+		$footprint = $_SESSION['footprint'];
+		foreach ($footprint as $i => $fp) {
+			$sid = $fp['sid'];
+			$path = $fp['path'];
+			$rev = $fp['rev'];
+			$name = $this->sources[$sid]->getName().$path;
+			if (is_numeric($rev)) {
+				$name = $name."@$rev";
+			} else {
+				$name = $name."$rev";
+			}
+			$link = hwLink($sid, $path, $rev);
+			$mdtext = $mdtext." $i. [$name]($link)\n";
+		}
+		
+		return $mdtext;
+	}
+	
+	public function handleDirectory($sid, $path, $mark) {
 		$mdtext = "";
 
 		$arr = explode("/", $path);
@@ -68,7 +97,12 @@ class Handler
 			if (substr($name, -1) != "/") {
 				$linkLog = hwLink($sid, $subpath, "@");
 				$link = hwLink($sid, $subpath, null);
-				$mdtext = $mdtext." * [[@]($linkLog)] [$name]($link)\n";
+				$mdtext = $mdtext." * [[@]($linkLog)]";
+				if ($mark === $name) {
+					$mdtext = $mdtext." **$name**\n";
+				} else {
+					$mdtext = $mdtext." [$name]($link)\n";
+				}
 			}
 		}
 

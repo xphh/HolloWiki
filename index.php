@@ -17,12 +17,13 @@ if ($path == null) {
 }
 
 $handler = new Handler($g_sources);
+$handler->footprint($sid, $path, $rev);
 
 if (substr($path, -1) == "/") {
-	$index = $handler->makeIndex($sid, $path);
+	$index = $handler->makeIndex($sid, $path, "Home.md");
 	$content = $handler->handleFile($sid, $path."Home.md", null);
 } else {
-	$index = $handler->makeIndex($sid, get_dirpath($path));
+	$index = $handler->makeIndex($sid, get_dirpath($path), basename($path));
 	$content = $handler->handleFile($sid, $path, $rev);
 }
 
