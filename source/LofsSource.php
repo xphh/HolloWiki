@@ -1,26 +1,8 @@
 <?php
+require_once("source/BaseSource.php");
 
-class LofsSource 
+class LofsSource extends BaseSource
 {
-	private $name;
-	private $encoding;
-	private $basedir;
-
-	public function LofsSource($name) {
-		$this->name = $name;
-	}
-	
-	public function getName() {
-		return $this->name;
-	}
-
-	public function setEncoding($encoding) {
-		$this->encoding = $encoding;
-	}
-	
-	public function setBasedir($basedir) {
-		$this->basedir = $basedir;
-	}
 	
 	private function safepath($path) {
 		$path = iconv('UTF-8', $this->encoding, $path);

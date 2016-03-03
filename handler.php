@@ -122,9 +122,7 @@ class Handler
 			$content = $this->sources[$sid]->getFile($path."@".$rev);
 		}
 
-		$ext = get_extension($path);
-		
-		if ($ext == "md") {
+		if ($this->sources[$sid]->getFileType($path) == 'md') {
 			return $this->handleMarkdown($sid, $path, $content);
 		} else {
 			$filesize = strlen($content);
@@ -159,18 +157,24 @@ class Handler
 	}
 	
 	private function handleMarkdown($sid, $path, $content) {
-		global $i_fpath, $i_sid;
+		global $i_path, $i_fpath, $i_sid;
+		$i_path = $path;
 		$i_fpath = get_dirpath($path);
 		$i_sid = $sid;
 		
 		function replace1($m) {
-			global $i_fpath, $i_sid;
+			global $i_path, $i_fpath, $i_sid;
 			$url = $m[2];
 			if (strpos($url, "/") === 0 || 
 				strpos($url, "?") === 0 || 
 				strpos($url, "http://") === 0 || 
 				strpos($url, "https://") === 0) {
 				return "[$m[1]]($url)";
+			} else if (strpos($url, "@") === 0) {
+				$rev = substr($url, 1);
+				$rev = ($rev == "") ? "@" : $rev;
+				$link = hwLink($i_sid, $i_path, $rev);
+				return "[$m[1]]($link)";
 			} else {
 				$realurl = normalizePath($i_fpath.$url);
 				$link = hwLink($i_sid, $realurl, null);
@@ -178,7 +182,7 @@ class Handler
 			}
 		}
 		function replace2($m) {
-			global $i_fpath, $i_sid;
+			global $i_path, $i_fpath, $i_sid;
 			$link = hwLink($i_sid, $i_fpath.$m[1].".md", null);
 			return "[$m[1]]($link)";
 		}

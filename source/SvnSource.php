@@ -1,13 +1,9 @@
 <?php
+require_once("source/BaseSource.php");
 
-class SvnSource 
+class SvnSource extends BaseSource
 {
-	private $name;
-	private $basedir;
-	private $encoding;
-	private $username;
-	private $password;
-
+	
 	private function command($op, $path, $istext) {
 		$cmd = "svn $op \"$this->basedir$path\" --username $this->username --password $this->password";
 		$cmd = iconv('UTF-8', $this->encoding, $cmd);
@@ -24,27 +20,6 @@ class SvnSource
 		}
 		
 		return $data;
-	}
-	
-	public function SvnSource($name) {
-		$this->name = $name;
-	}
-	
-	public function getName() {
-		return $this->name;
-	}
-
-	public function setEncoding($encoding) {
-		$this->encoding = $encoding;
-	}
-	
-	public function setBasedir($basedir) {
-		$this->basedir = $basedir;
-	}
-	
-	public function setAuth($username, $password) {
-		$this->username = $username;
-		$this->password = $password;
 	}
 	
 	public function getDirectory($path) {
