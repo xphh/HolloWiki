@@ -33,7 +33,7 @@ class BaseSource
 		return "";
 	}
 	
-	public function getFile($path) {
+	public function getFile($path, $rev = null) {
 		return "";
 	}
 	

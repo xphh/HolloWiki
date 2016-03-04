@@ -109,7 +109,7 @@ class Handler
 		return $mdtext;
 	}
 	
-	public function handleFile($sid, $path, $rev) {
+	public function handleFile($sid, $path, $rev = null) {
 		if ($rev != null && !is_numeric($rev)) {
 			return $this->handleHistory($sid, $path);
 		}

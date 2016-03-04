@@ -21,7 +21,7 @@ $handler->footprint($sid, $path, $rev);
 
 if (substr($path, -1) == "/") {
 	$index = $handler->makeIndex($sid, $path, "Home.md");
-	$content = $handler->handleFile($sid, $path."Home.md", null);
+	$content = $handler->handleFile($sid, $path."Home.md");
 } else {
 	$index = $handler->makeIndex($sid, get_dirpath($path), basename($path));
 	$content = $handler->handleFile($sid, $path, $rev);

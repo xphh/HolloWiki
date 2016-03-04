@@ -28,7 +28,10 @@ class SvnSource extends BaseSource
 		return $arr;
 	}
 	
-	public function getFile($path) {
+	public function getFile($path, $rev = null) {
+		if ($rev != null) {
+			$path = "$path@$rev";
+		}
 		$raw = $this->command('cat', $path, false);
 		return $raw;
 	}
