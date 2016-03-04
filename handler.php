@@ -114,17 +114,16 @@ class Handler
 			return $this->handleHistory($sid, $path);
 		}
 		
-		if ($rev == null) {
-			$filename = basename($path);
-			$content = $this->sources[$sid]->getFile($path);
-		} else {
-			$filename = "r".$rev."-".basename($path);
-			$content = $this->sources[$sid]->getFile($path."@".$rev);
-		}
-
+		$content = $this->sources[$sid]->getFile($path, $rev);
+		
 		if ($this->sources[$sid]->getFileType($path) == 'md') {
 			return $this->handleMarkdown($sid, $path, $content);
 		} else {
+			$filename = basename($path);
+			if ($rev != null) {
+				$filename = "r$rev-$filename";
+			}
+			
 			$filesize = strlen($content);
 			$type = get_mimetype($filename);
 			$filename = rawurlencode($filename);
