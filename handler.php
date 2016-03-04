@@ -1,7 +1,7 @@
 <?php
 require_once("footprint.php");
 
-function hwLink($sid, $path, $rev) {
+function hwLink($sid, $path, $rev = null) {
 	$link = "?p=".rawurlencode($path)."&s=".rawurlencode($sid);
 	if ($rev != null) {
 		$link = $link."&r=$rev";
@@ -31,7 +31,7 @@ class Handler
 				$mdtext = $mdtext.$this->handleDirectory($sid, $path, $mark);
 			} else {
 				$name = $s->getName();
-				$link = hwLink($i, "/", null);
+				$link = hwLink($i, "/");
 				$mdtext = $mdtext."* [$name]($link)\n";
 			}
 		}
@@ -67,12 +67,12 @@ class Handler
 		$dirpath = "/";
 
 		$sname = $this->sources[$sid]->getName();
-		$link = hwLink($sid, "/", null);
+		$link = hwLink($sid, "/");
 		$mdtext = $mdtext."* [$sname]($link) / ";
 		foreach ($arr as $dir) {
 			if ($dir != "") {
 				$dirpath = "$dirpath$dir/";
-				$link = hwLink($sid, $dirpath, null);
+				$link = hwLink($sid, $dirpath);
 				$mdtext = $mdtext."[$dir]($link) / ";
 			}
 		}
@@ -85,7 +85,7 @@ class Handler
 			}
 			$subpath = $path.$name;
 			if (substr($name, -1) == "/") {
-				$link = hwLink($sid, $subpath, null);
+				$link = hwLink($sid, $subpath);
 				$mdtext = $mdtext." * [$name]($link)\n";
 			}
 		}
@@ -96,7 +96,7 @@ class Handler
 			$subpath = $path.$name;
 			if (substr($name, -1) != "/") {
 				$linkLog = hwLink($sid, $subpath, "@");
-				$link = hwLink($sid, $subpath, null);
+				$link = hwLink($sid, $subpath);
 				$mdtext = $mdtext." * [[@]($linkLog)]";
 				if ($mark === $name) {
 					$mdtext = $mdtext." **$name**\n";
@@ -176,13 +176,13 @@ class Handler
 				return "[$m[1]]($link)";
 			} else {
 				$realurl = normalizePath($i_fpath.$url);
-				$link = hwLink($i_sid, $realurl, null);
+				$link = hwLink($i_sid, $realurl);
 				return "[$m[1]]($link)";
 			}
 		}
 		function replace2($m) {
 			global $i_path, $i_fpath, $i_sid;
-			$link = hwLink($i_sid, $i_fpath.$m[1].".md", null);
+			$link = hwLink($i_sid, $i_fpath.$m[1].".md");
 			return "[$m[1]]($link)";
 		}
 
