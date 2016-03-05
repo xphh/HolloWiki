@@ -2,16 +2,22 @@
 
 class BaseSource 
 {
+	protected $id;
 	protected $name;
 	protected $basedir;
 	protected $encoding;
 	protected $username;
 	protected $password;
 
-	public function BaseSource($name) {
+	public function BaseSource($id, $name) {
+		$this->id = $id;
 		$this->name = $name;
 	}
 	
+	public function getId() {
+		return $this->id;
+	}
+
 	public function getName() {
 		return $this->name;
 	}

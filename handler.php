@@ -1,4 +1,5 @@
 <?php
+require_once("source.php");
 require_once("footprint.php");
 
 function hwLink($sid, $path, $rev = null) {
@@ -11,24 +12,27 @@ function hwLink($sid, $path, $rev = null) {
 
 class Handler
 {
-	private $sources;
+	private $source;
+	private $sid;
+	private $path;
+	private $rev;
 	
-	public function Handler($sources) {
-		$this->sources = $sources;
+	public function Handler($sid, $path, $rev) {
+		$this->source = SourceFactory::get($sid);
+		$this->sid = $this->source->getId();
+		$this->path = $path;
+		$this->rev = $rev;
 	}
 	
-	public function footprint($sid, $path, $rev) {
-		Footprint::record($sid, $path, $rev);
-	}
-	
-	public function makeIndex($sid, $path, $mark) {
+	public function makeIndex() {
 		$mdtext = "## Directory\n";
 		
 		$mdtext = $mdtext.$this->makeFootprint();
 
-		foreach ($this->sources as $i => $s) {
-			if ($i == $sid) {
-				$mdtext = $mdtext.$this->handleDirectory($sid, $path, $mark);
+		$sources = SourceFactory::all();
+		foreach ($sources as $i => $s) {
+			if ($i == $this->sid) {
+				$mdtext = $mdtext.$this->handleDirectory();
 			} else {
 				$name = $s->getName();
 				$link = hwLink($i, "/");
@@ -47,7 +51,7 @@ class Handler
 			$sid = $fp['sid'];
 			$path = $fp['path'];
 			$rev = $fp['rev'];
-			$name = $this->sources[$sid]->getName().$path;
+			$name = SourceFactory::get($sid)->getName().$path;
 			if (is_numeric($rev)) {
 				$name = $name."@$rev";
 			} else {
@@ -60,13 +64,18 @@ class Handler
 		return $mdtext;
 	}
 	
-	public function handleDirectory($sid, $path, $mark) {
+	public function handleDirectory() {
+		$source = $this->source;
+		$sid = $this->sid;
+		$path = get_dirpath($this->path);
+		$mark = basename($this->path);
+		
 		$mdtext = "";
 
 		$arr = explode("/", $path);
 		$dirpath = "/";
 
-		$sname = $this->sources[$sid]->getName();
+		$sname = $source->getName();
 		$link = hwLink($sid, "/");
 		$mdtext = $mdtext."* [$sname]($link) / ";
 		foreach ($arr as $dir) {
@@ -78,7 +87,7 @@ class Handler
 		}
 		$mdtext = $mdtext."\n";
 
-		$list = $this->sources[$sid]->getDirectory($path);
+		$list = $source->getDirectory($path);
 		foreach($list as $name) {
 			if ($name == "") {
 				continue;
@@ -109,15 +118,20 @@ class Handler
 		return $mdtext;
 	}
 	
-	public function handleFile($sid, $path, $rev = null) {
+	public function handleFile() {
+		$source = $this->source;
+		$sid = $this->sid;
+		$path = $this->path;
+		$rev = $this->rev;
+
 		if ($rev != null && !is_numeric($rev)) {
 			return $this->handleHistory($sid, $path);
 		}
 		
-		$content = $this->sources[$sid]->getFile($path, $rev);
+		$content = $source->getFile($path, $rev);
 		
-		if ($this->sources[$sid]->getFileType($path) == 'md') {
-			return $this->handleMarkdown($sid, $path, $content);
+		if ($source->getFileType($path) == 'md') {
+			return $this->handleMarkdown($content);
 		} else {
 			$filename = basename($path);
 			if ($rev != null) {
@@ -136,8 +150,12 @@ class Handler
 		}
 	}
 	
-	private function handleHistory($sid, $path) {
-		$logs = $this->sources[$sid]->getHistory($path);
+	private function handleHistory() {
+		$source = $this->source;
+		$sid = $this->sid;
+		$path = $this->path;
+
+		$logs = $source->getHistory($path);
 
 		$mdtext = "##History\n";
 
@@ -155,11 +173,11 @@ class Handler
 		return $mdtext;
 	}
 	
-	private function handleMarkdown($sid, $path, $content) {
+	private function handleMarkdown($content) {
 		global $i_path, $i_fpath, $i_sid;
-		$i_path = $path;
-		$i_fpath = get_dirpath($path);
-		$i_sid = $sid;
+		$i_path = $this->path;
+		$i_fpath = get_dirpath($this->path);
+		$i_sid = $this->sid;
 		
 		function replace1($m) {
 			global $i_path, $i_fpath, $i_sid;
