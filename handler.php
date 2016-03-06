@@ -32,7 +32,7 @@ class Handler
 		$sources = SourceFactory::all();
 		foreach ($sources as $i => $s) {
 			if ($i == $this->sid) {
-				$mdtext = $mdtext.$this->handleDirectory();
+				$mdtext = $mdtext.$this->makeDirectory();
 			} else {
 				$name = $s->getName();
 				$link = hwLink($i, "/");
@@ -43,7 +43,7 @@ class Handler
 		return $mdtext;
 	}
 	
-	public function makeFootprint() {
+	private function makeFootprint() {
 		$mdtext = "* Footprint\n";
 		
 		$footprint = $_SESSION['footprint'];
@@ -64,7 +64,7 @@ class Handler
 		return $mdtext;
 	}
 	
-	public function handleDirectory() {
+	private function makeDirectory() {
 		$source = $this->source;
 		$sid = $this->sid;
 		$path = get_dirpath($this->path);
@@ -118,14 +118,14 @@ class Handler
 		return $mdtext;
 	}
 	
-	public function handleFile() {
+	public function makeContent() {
 		$source = $this->source;
 		$sid = $this->sid;
 		$path = $this->path;
 		$rev = $this->rev;
 
 		if ($rev != null && !is_numeric($rev)) {
-			return $this->handleHistory($sid, $path);
+			return $this->makeHistory();
 		}
 		
 		$content = $source->getFile($path, $rev);
@@ -150,7 +150,7 @@ class Handler
 		}
 	}
 	
-	private function handleHistory() {
+	private function makeHistory() {
 		$source = $this->source;
 		$sid = $this->sid;
 		$path = $this->path;

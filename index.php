@@ -22,7 +22,7 @@ if (substr($path, -1) == "/") {
 
 $handler = new Handler($sid, $path, $rev);
 $index = $handler->makeIndex();
-$content = $handler->handleFile();
+$content = $handler->makeContent();
 
 $themes = file_get_contents("themes.md");
 
