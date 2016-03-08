@@ -11,13 +11,11 @@ class SourceFactory
 		return $source;
 	}
 	
-	public static function createProxy($proxy, $type, $id, $name) {
+	public static function proxy($type, $source) {
 		require_once("source/$type.php");
-		require_once("source/$proxy.php");
-		$source = new $type($id, $name);
-		$sourceProxy = new $proxy($source, $id, $name);
-		self::$sources[$id] = $sourceProxy;
-		return $source;
+		$proxy = new $type($source);
+		self::$sources[$source->getId()] = $proxy;
+		return $proxy;
 	}
 	
 	public static function all() {

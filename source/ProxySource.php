@@ -4,21 +4,9 @@ class ProxySource extends BaseSource
 {
 	protected $source;
 
-	public function ProxySource($source, $id, $name) {
-		parent::BaseSource($id, $name);
+	public function ProxySource($source) {
+		parent::BaseSource($source->getId(), $source->getName());
 		$this->source = $source;
-	}
-	
-	public function setEncoding($encoding) {
-		$this->source->setEncoding($encoding);
-	}
-	
-	public function setBasedir($basedir) {
-		$this->source->setBasedir($basedir);
-	}
-	
-	public function setAuth($username, $password) {
-		$this->source->setAuth($username, $password);
 	}
 	
 	public function getDirectory($path) {
