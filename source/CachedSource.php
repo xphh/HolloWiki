@@ -1,10 +1,10 @@
 <?php
-require_once("source/SvnSource.php");
+require_once("source/ProxySource.php");
 require_once("FileSystemCache/lib/FileSystemCache.php");
 
 FileSystemCache::$cacheDir = 'cache';
 
-class CachedSvnSource extends SvnSource
+class CachedSource extends ProxySource
 {
 	private $expired = 3600;
 	
