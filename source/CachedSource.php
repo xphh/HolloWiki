@@ -13,8 +13,7 @@ class CachedSource extends ProxySource
 	}
 	
 	public function getDirectory($path) {
-		$key_data = $path;
-		$key = FileSystemCache::generateCacheKey($key_data, $this->getId());
+		$key = FileSystemCache::generateCacheKey($path, $this->getId());
 		$data = FileSystemCache::retrieve($key);
 		if ($data === false) {
 			$data = parent::getDirectory($path);
@@ -24,23 +23,29 @@ class CachedSource extends ProxySource
 	}
 	
 	public function getFile($path, $rev = null) {
-		$key_data = ($rev == null) ? $path : "$path@$rev";
-		$key = FileSystemCache::generateCacheKey($key_data, $this->getId());
+		if ($rev == null) {
+			return $this->getLatestFile($path);
+		} else {
+			return $this->getHistoricFile($path, $rev);
+		}
+	}
+	
+	private function getLatestFile($path) {
+		$key = FileSystemCache::generateCacheKey($path, $this->getId());
 		$data = FileSystemCache::retrieve($key);
 		if ($data === false) {
-			$data = parent::getFile($path, $rev);
+			$data = parent::getFile($path);
 			FileSystemCache::store($key, $data, $this->expired);
 		}
 		return $data;
 	}
 	
-	public function getHistory($path) {
-		$key_data = "$path@";
-		$key = FileSystemCache::generateCacheKey($key_data, $this->getId());
+	private function getHistoricFile($path, $rev) {
+		$key = FileSystemCache::generateCacheKey("$path@$rev", $this->getId());
 		$data = FileSystemCache::retrieve($key);
 		if ($data === false) {
-			$data = parent::getHistory($path);
-			FileSystemCache::store($key, $data, $this->expired);
+			$data = parent::getFile($path, $rev);
+			FileSystemCache::store($key, $data);
 		}
 		return $data;
 	}
