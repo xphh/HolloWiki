@@ -131,7 +131,11 @@ class Handler
 		$content = $source->getFile($path, $rev);
 		
 		if ($source->getFileType($path) == 'md') {
-			return $this->handleMarkdown($content);
+			if ($content == "") {
+				return "## Content\n".$this->makeDirectory();
+			} else {
+				return $this->handleMarkdown($content);
+			}
 		} else {
 			$filename = basename($path);
 			if ($rev != null) {
