@@ -13,6 +13,14 @@ function get_dirpath($path) {
 	return $fpath;
 }
 
+function hwLink($sid, $path, $rev = null) {
+	$link = "?p=".rawurlencode($path)."&s=".rawurlencode($sid);
+	if ($rev != null) {
+		$link = $link."&r=$rev";
+	}
+	return $link;
+}
+
 function wfDebug($x) {}
 $wgMimeTypeFile = 'mimes/mime.types';
 require_once("mimes/MimeMagic.php");

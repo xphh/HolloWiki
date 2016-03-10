@@ -2,14 +2,6 @@
 require_once("source.php");
 require_once("footprint.php");
 
-function hwLink($sid, $path, $rev = null) {
-	$link = "?p=".rawurlencode($path)."&s=".rawurlencode($sid);
-	if ($rev != null) {
-		$link = $link."&r=$rev";
-	}
-	return $link;
-}
-
 class Handler
 {
 	private $source;
@@ -131,11 +123,7 @@ class Handler
 		$content = $source->getFile($path, $rev);
 		
 		if ($source->getFileType($path) == 'md') {
-			if ($content == "") {
-				return "## Content\n".$this->makeDirectory();
-			} else {
-				return $this->handleMarkdown($content);
-			}
+			return $this->handleMarkdown($content);
 		} else {
 			$filename = basename($path);
 			if ($rev != null) {

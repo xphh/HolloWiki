@@ -4,7 +4,7 @@ require_once("FileSystemCache/lib/FileSystemCache.php");
 
 FileSystemCache::$cacheDir = 'cache';
 
-class CachedSource extends ProxySource
+class CachedProxy extends ProxySource
 {
 	private $expired = 3600;
 	
