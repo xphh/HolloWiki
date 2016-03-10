@@ -6,16 +6,21 @@ FileSystemCache::$cacheDir = 'cache';
 
 class CachedProxy extends ProxySource
 {
-	private $expired = 3600;
+	private $expired = 31536000;
 	
 	public function setExpired($expired) {
 		$this->expired = $expired;
 	}
 	
+	private function getNocache() {
+		global $nocache;
+		return $nocache;
+	}
+	
 	public function getDirectory($path) {
 		$key = FileSystemCache::generateCacheKey($path, $this->getId());
 		$data = FileSystemCache::retrieve($key);
-		if ($data === false) {
+		if ($data === false || $this->getNocache() == 1) {
 			$data = parent::getDirectory($path);
 			FileSystemCache::store($key, $data, $this->expired);
 		}
@@ -23,19 +28,30 @@ class CachedProxy extends ProxySource
 	}
 	
 	public function getFile($path, $rev = null) {
-		if ($rev == null) {
-			return $this->getLatestFile($path);
+		if ($this->getFileType($path) == 'md') {
+			if ($rev == null) {
+				return $this->getLatestFile($path);
+			} else {
+				return $this->getHistoricFile($path, $rev);
+			}
 		} else {
-			return $this->getHistoricFile($path, $rev);
+			return parent::getFile($path);
 		}
 	}
 	
 	private function getLatestFile($path) {
 		$key = FileSystemCache::generateCacheKey($path, $this->getId());
 		$data = FileSystemCache::retrieve($key);
-		if ($data === false) {
+		if ($data === false || $this->getNocache() == 1) {
 			$data = parent::getFile($path);
 			FileSystemCache::store($key, $data, $this->expired);
+		} else {
+			$rootdir = dirname($_SERVER['PHP_SELF']);
+			$cachedate = date(" Y-m-d H:i:s ", filemtime($key->getFileName()));
+			$head = "![]($rootdir/assets/cached.png) ";
+			$head = $head."This is a cached version from `$cachedate` ";
+			$head = $head."[Get the latest version]($rootdir/options.php?nocache=1)\n\n";
+			$data = $head.$data;
 		}
 		return $data;
 	}

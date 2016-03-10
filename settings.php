@@ -12,6 +12,5 @@ $source->setBasedir('https://github.com/xphh/HolloWiki/trunk');
 $source->setAuth('', '');
 $source = SourceFactory::proxy('DirBrowserProxy', $source);
 $source = SourceFactory::proxy('CachedProxy', $source);
-$source->setExpired(60);
 
 ?>

@@ -5,7 +5,7 @@ require_once("footprint.php");
 require_once("parsedown/Parsedown.php");
 
 include("settings.php");
-include("theme.php");
+include("options.php");
 
 $rev = $_GET["r"];
 $sid = $_GET["s"];
