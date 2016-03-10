@@ -47,9 +47,9 @@ class CachedProxy extends ProxySource
 			FileSystemCache::store($key, $data, $this->expired);
 		} else {
 			$rootdir = dirname($_SERVER['PHP_SELF']);
-			$cachedate = date(" Y-m-d H:i:s ", filemtime($key->getFileName()));
+			$past = $this->pastTime(time() - filemtime($key->getFileName()));
 			$head = "![]($rootdir/assets/cached.png) ";
-			$head = $head."This is a cached version from `$cachedate` ";
+			$head = $head."This is a cached version from `$past` ";
 			$head = $head."[Get the latest version]($rootdir/options.php?nocache=1)\n\n";
 			$data = $head.$data;
 		}
@@ -64,6 +64,24 @@ class CachedProxy extends ProxySource
 			FileSystemCache::store($key, $data);
 		}
 		return $data;
+	}
+	
+	private function pastTime($sec) {
+		$bounds = array(1, 60, 60, 24, 30.5, 12);
+		$units = array('second', 'minute', 'hour', 'day', 'month', 'year');
+		$n = $sec < 1 ? 1 : $sec;
+		foreach ($bounds as $i => $b) {
+			if ($n >= $b) {
+				$n = floor($n / $b);
+				$u = $units[$i];
+			} else {
+				break;
+			}
+		}
+		if ($n > 1) {
+			$u = $u.'s';
+		}
+		return "$n $u ago";
 	}
 	
 }
