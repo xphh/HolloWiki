@@ -13,6 +13,10 @@ function get_dirpath($path) {
 	return $fpath;
 }
 
+function get_basename($path) {
+	return preg_replace('/^.*[\\\\\\/]/', '', $path);
+}
+
 function hwLink($sid, $path, $rev = null) {
 	$link = "?p=".rawurlencode($path)."&s=".rawurlencode($sid);
 	if ($rev != null) {

@@ -60,7 +60,7 @@ class Handler
 		$source = $this->source;
 		$sid = $this->sid;
 		$path = get_dirpath($this->path);
-		$mark = basename($this->path);
+		$mark = get_basename($this->path);
 		
 		$mdtext = "";
 
@@ -125,7 +125,7 @@ class Handler
 		if ($source->getFileType($path) == 'md') {
 			return $this->handleMarkdown($content);
 		} else {
-			$filename = basename($path);
+			$filename = get_basename($path);
 			if ($rev != null) {
 				$filename = "r$rev-$filename";
 			}
@@ -166,13 +166,10 @@ class Handler
 	}
 	
 	private function handleMarkdown($content) {
-		global $i_path, $i_fpath, $i_sid;
-		$i_path = $this->path;
-		$i_fpath = get_dirpath($this->path);
-		$i_sid = $this->sid;
+		$path = $this->path;
+		$sid = $this->sid;
 		
-		function replace1($m) {
-			global $i_path, $i_fpath, $i_sid;
+		$replace1 = function ($m) use($path, $sid) {
 			$url = $m[2];
 			if (strpos($url, "/") === 0 || 
 				strpos($url, "?") === 0 || 
@@ -182,22 +179,21 @@ class Handler
 			} else if (strpos($url, "@") === 0) {
 				$rev = substr($url, 1);
 				$rev = ($rev == "") ? "@" : $rev;
-				$link = hwLink($i_sid, $i_path, $rev);
+				$link = hwLink($sid, $path, $rev);
 				return "[$m[1]]($link)";
 			} else {
-				$realurl = normalizePath($i_fpath.$url);
-				$link = hwLink($i_sid, $realurl);
+				$realurl = normalizePath(get_dirpath($path).$url);
+				$link = hwLink($sid, $realurl);
 				return "[$m[1]]($link)";
 			}
-		}
-		function replace2($m) {
-			global $i_path, $i_fpath, $i_sid;
-			$link = hwLink($i_sid, $i_fpath.$m[1].".md");
+		};
+		$replace2 = function ($m) use($path, $sid) {
+			$link = hwLink($sid, get_dirpath($path).$m[1].".md");
 			return "[$m[1]]($link)";
-		}
+		};
 
-		$content = preg_replace_callback("/\[(.*)\]\((.+)\)/U", replace1, $content);
-		$content = preg_replace_callback("/\[\[(.+)\]\]/U", replace2, $content);
+		$content = preg_replace_callback("/\[(.*)\]\((.+)\)/U", $replace1, $content);
+		$content = preg_replace_callback("/\[\[(.+)\]\]/U", $replace2, $content);
 
 		return $content;
 	}

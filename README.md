@@ -7,7 +7,7 @@ demo: http://xphh.net/hw
 ## 配置
 
 前提：
-1. 当前HolloWiki运行在PHP 5.2及以上版本。
+1. 当前HolloWiki运行在PHP 5.3及以上版本。
 2. 需要安装subversion命令行工具。
 
 自定义：
