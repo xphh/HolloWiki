@@ -42,6 +42,35 @@ class Footprint
 		return reset($_SESSION['footprint']);
 	}
 	
+	public static function makeList() {
+		$footprint = $_SESSION['footprint'];
+		foreach ($footprint as $i => $fp) {
+			$sid = $fp['sid'];
+			$path = $fp['path'];
+			$rev = $fp['rev'];
+			$name = SourceFactory::get($sid)->getName().$path;
+			if (is_numeric($rev)) {
+				$name = $name."@$rev";
+			} else {
+				$name = $name."$rev";
+			}
+			$link = hwLink($sid, $path, $rev);
+			$mdtext = $mdtext." $i. [$name]($link)\n";
+		}
+		
+		return $mdtext;
+	}
+	
+	public static function redirectToLast() {
+		$node = Footprint::getFirst();
+		$url = $node['url'];
+		
+		header("HTTP/1.1 302 Found");
+		header("Location: $url");
+		
+		exit();
+	}
+
 }
 
 ?>

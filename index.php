@@ -2,10 +2,13 @@
 require_once("handler.php");
 require_once("utils.php");
 require_once("footprint.php");
-require_once("parsedown/Parsedown.php");
+require_once("pagemaker.php");
+require_once("options.php");
 
 include("settings.php");
-include("options.php");
+
+Options::handle('theme');
+Options::handle('nocache');
 
 $rev = $_GET["r"];
 $sid = $_GET["s"];
@@ -19,24 +22,14 @@ Footprint::record($sid, $path, $rev);
 if (substr($path, -1) == "/") {
 	$path = $path.'Home.md';
 }
-
 $handler = new Handler($sid, $path, $rev);
-$index = $handler->makeIndex();
-$content = $handler->makeContent();
 
-$themes = file_get_contents("themes.md");
-
-$Parsedown = new Parsedown();
-$index = $Parsedown->text($index);
-$content = $Parsedown->text($content);
-$themes = $Parsedown->text($themes);
-
-$template = file_get_contents("template.html");
-$template = str_replace("{%mdcss%}", $mdcss, $template);
-$template = str_replace("{%index%}", $index, $template);
-$template = str_replace("{%content%}", $content, $template);
-$template = str_replace("{%themes%}", $themes, $template);
-
-echo $template;
+$maker = new PageMaker();
+$maker->put('mdcss', Options::get('mdcss'));
+$maker->putMarkdown('index', $handler->makeIndex());
+$maker->putMarkdown('content', $handler->makeContent());
+$maker->putMarkdown('footprint', Footprint::makeList());
+$maker->putMarkdown('themes', file_get_contents('themes.md'));
+echo $maker->generate('template.html');
 
 ?>

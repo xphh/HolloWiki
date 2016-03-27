@@ -1,2 +1,1 @@
----
 **Theme** [default](?theme=default) | [avenir-white](?theme=avenir-white) | [foghorn](?theme=foghorn) | [markdown-alt](?theme=markdown-alt) | [markdown](?theme=markdown) | [markdown1](?theme=markdown1) | [markdown2](?theme=markdown2) | [markdown3](?theme=markdown3) | [markdown4](?theme=markdown4) | [markdown5](?theme=markdown5) | [markdown6](?theme=markdown6) | [markdown7](?theme=markdown7) | [markdown8](?theme=markdown8) | [markdown9](?theme=markdown9) | [markdown10](?theme=markdown10) | [screen](?theme=screen) | [swiss](?theme=swiss)

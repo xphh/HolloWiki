@@ -13,8 +13,7 @@ class CachedProxy extends ProxySource
 	}
 	
 	private function getNocache() {
-		global $nocache;
-		return $nocache;
+		return Options::get('nocache');
 	}
 	
 	public function getDirectory($path) {
@@ -50,7 +49,7 @@ class CachedProxy extends ProxySource
 			$past = $this->pastTime(time() - filemtime($key->getFileName()));
 			$head = "![]($rootdir/assets/cached.png) ";
 			$head = $head."This is a cached version from `$past` ";
-			$head = $head."[Get the latest version]($rootdir/options.php?nocache=1)\n\n";
+			$head = $head."[Get the latest version](?nocache=1)\n\n";
 			$data = $head.$data;
 		}
 		return $data;

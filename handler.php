@@ -17,10 +17,6 @@ class Handler
 	}
 	
 	public function makeIndex() {
-		$mdtext = "## Directory\n";
-		
-		$mdtext = $mdtext.$this->makeFootprint();
-
 		$sources = SourceFactory::all();
 		foreach ($sources as $i => $s) {
 			if ($i == $this->sid) {
@@ -30,27 +26,6 @@ class Handler
 				$link = hwLink($i, "/");
 				$mdtext = $mdtext."* [$name]($link)\n";
 			}
-		}
-		
-		return $mdtext;
-	}
-	
-	private function makeFootprint() {
-		$mdtext = "* Footprint\n";
-		
-		$footprint = $_SESSION['footprint'];
-		foreach ($footprint as $i => $fp) {
-			$sid = $fp['sid'];
-			$path = $fp['path'];
-			$rev = $fp['rev'];
-			$name = SourceFactory::get($sid)->getName().$path;
-			if (is_numeric($rev)) {
-				$name = $name."@$rev";
-			} else {
-				$name = $name."$rev";
-			}
-			$link = hwLink($sid, $path, $rev);
-			$mdtext = $mdtext." $i. [$name]($link)\n";
 		}
 		
 		return $mdtext;
