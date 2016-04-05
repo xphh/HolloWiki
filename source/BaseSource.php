@@ -8,6 +8,7 @@ class BaseSource
 	protected $encoding;
 	protected $username;
 	protected $password;
+	protected $template;
 
 	public function BaseSource($id, $name) {
 		$this->id = $id;
@@ -33,6 +34,14 @@ class BaseSource
 	public function setAuth($username, $password) {
 		$this->username = $username;
 		$this->password = $password;
+	}
+	
+	public function setTemplate($template) {
+		$this->template = $template;
+	}
+	
+	public function getTemplate() {
+		return ($this->template == '') ? 'default' : $this->template;
 	}
 	
 	public function getDirectory($path) {

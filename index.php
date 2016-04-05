@@ -27,9 +27,12 @@ $handler = new Handler($sid, $path, $rev);
 $maker = new PageMaker();
 $maker->put('mdcss', Options::get('mdcss'));
 $maker->putMarkdown('index', $handler->makeIndex());
+$maker->putMarkdown('pointer', $handler->makePointer());
 $maker->putMarkdown('content', $handler->makeContent());
 $maker->putMarkdown('footprint', Footprint::makeList());
 $maker->putMarkdown('themes', file_get_contents('themes.md'));
-echo $maker->generate('template.html');
+
+$template = SourceFactory::get($sid)->getTemplate();
+echo $maker->generate("template/$template.html");
 
 ?>

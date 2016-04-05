@@ -31,11 +31,10 @@ class Handler
 		return $mdtext;
 	}
 	
-	private function makeDirectory() {
+	public function makePointer() {
 		$source = $this->source;
 		$sid = $this->sid;
 		$path = get_dirpath($this->path);
-		$mark = get_basename($this->path);
 		
 		$mdtext = "";
 
@@ -53,6 +52,17 @@ class Handler
 			}
 		}
 		$mdtext = $mdtext."\n";
+		
+		return $mdtext;
+	}
+	
+	private function makeDirectory() {
+		$source = $this->source;
+		$sid = $this->sid;
+		$path = get_dirpath($this->path);
+		$mark = get_basename($this->path);
+		
+		$mdtext = $this->makePointer();
 
 		$list = $source->getDirectory($path);
 		foreach($list as $name) {
