@@ -6,18 +6,37 @@
 	<link href="highlight/styles/github.css" rel="stylesheet" type="text/css" />
 	<script src="highlight/highlight.pack.js"></script>
 	<script>hljs.initHighlightingOnLoad();</script>
+	
+<script>
+window.onload = function() {
+	var controller_div = document.getElementById('sidebar_controller');
+	controller_div.onmousedown = function () {
+		var sidebar_div = document.getElementById('sidebar');
+		var content_div = document.getElementById('content');
+		if (sidebar_div.offsetLeft < 0) {
+			sidebar_div.style.left = 0;
+			content_div.style.left = content_div.offsetLeft + sidebar_div.offsetWidth;
+		} else {
+			sidebar_div.style.left = -sidebar_div.offsetWidth;
+			content_div.style.left = controller_div.offsetWidth;
+		}
+	}
+}
+</script>
+
 </head>
 
 <body>
 
-<div style="position:absolute;left:0px;top:20px;width:400px;padding:5px;margin:5px">
+<div id="sidebar" style="position:absolute;left:0px;top:20px;width:400px;height:100%;padding:5px;margin:5px">
+<span id="sidebar_controller" style="position:absolute;width:20px;height:100%;left:100%;background:#CDCDCD;"></span>
 <h2>Footprint</h2>
 {%footprint%}
 <h2>Directory</h2>
 {%index%}
 </div>
 
-<div style="position:absolute;left:440px;top:20px;min-width:640px;padding:5px;margin:5px">
+<div id="content" style="position:absolute;left:420px;top:20px;min-width:640px;padding:10px;margin:10px">
 {%content%}
 <hr>
 {%themes%}
