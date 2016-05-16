@@ -1,0 +1,49 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>域账号认证</title>
+<link type="text/css" rel="stylesheet" href="css/ac.css">
+<script type="text/javascript">
+function checkSubmit() { 
+	var username = document.form.username;
+	if (username.value.length == 0) { 
+		alert("请输入域账号（即您的工号）"); 
+		username.focus(); 
+		return false;
+	}
+	var password = document.form.password;
+	if (password.value.length == 0) { 
+		alert("请输入域账号对应的密码"); 
+		password.focus(); 
+		return false;
+	}
+	return true;
+}
+</script>
+</head>
+
+<body>
+
+<form name="form" action="?action=acpost" method="post" class="smart-green">
+<h1>乐橙WIKI访问权限控制</h1>
+
+<p>{%hint%}</p>
+
+<label>
+<span>域账号：</span>
+<input id="username" type="text" name="username" placeholder="工号" />
+</label>
+
+<label>
+<span>密码：</span>
+<input id="password" type="password" name="password" placeholder="域账号的密码" />
+</label>
+
+<label>
+<input type="submit" class="button" value="认证" onclick="return checkSubmit()" />
+</label>
+
+</form>
+
+</body>
+</html>
